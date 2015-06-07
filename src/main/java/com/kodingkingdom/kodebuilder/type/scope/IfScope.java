@@ -11,6 +11,7 @@ import com.kodingkingdom.kodebuilder.schedule.KodeBlock;
 import com.kodingkingdom.kodebuilder.schedule.KodeException;
 import com.kodingkingdom.kodebuilder.schedule.KodeSchedule;
 import com.kodingkingdom.kodebuilder.schedule.KodeScope;
+import com.kodingkingdom.kodebuilder.var.IntVar;
 
 public class IfScope extends KodeScope{
 
@@ -49,6 +50,8 @@ public class IfScope extends KodeScope{
 		IfBlock iF = (IfBlock)scope;
 		if (iF.ifLeft) {
 			iF.ifLeft=false;
+			sch.getKodeVars().putIfAbsent("_else", new IntVar("_else"));
+			sch.getKodeVars().get("_else").setdata(iF.cond?0L:1L);
 			if (iF.cond) sch.timeSchedule=scope.scopePointer;
 			else sch.getScope().pop();}
 		else sch.getScope().pop();}	

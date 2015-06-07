@@ -47,6 +47,7 @@ import com.kodingkingdom.kodebuilder.type.misc.CommentType;
 import com.kodingkingdom.kodebuilder.type.misc.SayType;
 import com.kodingkingdom.kodebuilder.type.scope.EndScope;
 import com.kodingkingdom.kodebuilder.type.scope.IfScope;
+import com.kodingkingdom.kodebuilder.type.scope.ElseScope;
 import com.kodingkingdom.kodebuilder.type.scope.LoopScope;
 import com.kodingkingdom.kodebuilder.type.var.IntVarType;
 
@@ -93,7 +94,8 @@ public class KodeBuilder implements Listener {
 		blktypes.add(new FillSphereType());
 		blktypes.add(new IntVarType());
 		blktypes.add(new LoopScope());
-		blktypes.add(new IfScope());		
+		blktypes.add(new IfScope());	
+		blktypes.add(new ElseScope());		
 		blktypes.add(new EndScope());}
 
 	public void Live(){
