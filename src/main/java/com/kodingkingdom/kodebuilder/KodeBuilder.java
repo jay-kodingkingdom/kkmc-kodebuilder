@@ -12,6 +12,8 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -99,7 +101,6 @@ public class KodeBuilder implements Listener {
 		blktypes.add(new EndScope());}
 
 	public void Live(){
-		KodeConfig.loadConfig();
 		for (Player player : Bukkit.getOnlinePlayers()){
 			envs.put(player.getUniqueId(), new KodeEnvironment(this, blktypes, player));
 			envs.get(player.getUniqueId()).Live();}
@@ -123,8 +124,7 @@ public class KodeBuilder implements Listener {
     	for (KodeDroid droid : droids.values()) {
         	droid.getBlockState().update(true);}
     	for (KodeEnvironment env : envs.values()) {
-        	env.Die();}
-		KodeConfig.saveConfig();}
+        	env.Die();}}
 
 	@EventHandler(priority=EventPriority.MONITOR)
     public void playerjoin(PlayerJoinEvent e){
@@ -140,27 +140,38 @@ public class KodeBuilder implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void placeblock(BlockPlaceEvent e){
-		KodeBuilderPlugin.debug("pla blk contend");
+		//KodeBuilderPlugin.debug("pla blk contend");
 		//lock.lock();//envs.get(e.getPlayer().getUniqueId()).lock.lock();
 //		try{
 			if (Material.FURNACE.equals(e.getBlock().getType())){
+				final Player player = e .getPlayer();
+				final Block block = e .getBlockPlaced();
+				final BlockState replaced = e.getBlockReplacedState();
 				if (droids.containsKey(e.getPlayer().getUniqueId())){
 					envs.get(e.getPlayer().getUniqueId()).stop();
-					e.getBlockPlaced().setType(Material.AIR);
-					droids.get(e.getPlayer().getUniqueId()).move(e.getBlockPlaced().getLocation());}
-				else droids.put(e.getPlayer().getUniqueId(), new KodeDroid((Furnace)e.getBlock().getState(),envs.get(e.getPlayer().getUniqueId())));}//}
+					//e.setCancelled(true);
+					//final boolean is_op = e .getPlayer() .isOp(); //hack
+
+					//if (! is_op) e .getPlayer() .setOp(true);
+					droids.get(player.getUniqueId()).move(block.getLocation(), replaced);
+					//if (! is_op) e .getPlayer() .setOp(false);
+					}
+				else droids.put(e.getPlayer().getUniqueId(), new KodeDroid(replaced, (Furnace)e.getBlock().getState(),envs.get(e.getPlayer().getUniqueId())));//}
+			}
 		//finally{lock.unlock();//envs.get(e.getPlayer().getUniqueId()).lock.unlock();}
 		}
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void breakblock(BlockBreakEvent e){
-		KodeBuilderPlugin.debug("brk blk contend");
+		//KodeBuilderPlugin.debug("brk blk contend");
 		//lock.lock();
 		try{
 			if (Material.FURNACE.equals(e.getBlock().getType())||
 					Material.BURNING_FURNACE.equals(e.getBlock().getType())) {
-				e.setCancelled(true);
+				for (KodeDroid d : this .droids .values()) {
+					if (d .getBlockState() .getLocation() .equals(e.getBlock().getLocation())) {
+						e.setCancelled(true);}}
 				if (droids.containsKey(e.getPlayer().getUniqueId())){
-					if(getDroid(e.getPlayer().getUniqueId()).getFurnace().equals(e.getBlock().getState())){
+					if(getDroid(e.getPlayer().getUniqueId()).getFurnace().getLocation().equals(e.getBlock().getState().getLocation())){
 						envs.get(e.getPlayer().getUniqueId()).stop();
 						droids.get(e.getPlayer().getUniqueId()).getBlockState().update(true,true);}}}}
 		catch(InvalidDroidException ex){}
@@ -198,7 +209,7 @@ public class KodeBuilder implements Listener {
 			if (taskQueues.get(currQueueNum).getValue().isEmpty())taskQueues.remove(currQueueNum);}}
 
 	private void runScheduler(){
-		KodeBuilderPlugin.debug("sch contend");
+		//KodeBuilderPlugin.debug("sch contend");
 		long beginTime = System.currentTimeMillis();
 			//lock.lock();
 			try{

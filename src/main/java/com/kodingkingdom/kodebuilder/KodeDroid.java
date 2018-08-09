@@ -28,9 +28,9 @@ public class KodeDroid implements Listener{
 	void setBlockState(BlockState newBlockState){
 		blockState=newBlockState;}
 	
-	public KodeDroid(Furnace FurnaceState, KodeEnvironment Env){
-		env=Env;furnaceState=FurnaceState;blockState=furnaceState.getBlock().getState();blockState.setType(Material.AIR);
-		furnaceState.update(true);}
+	public KodeDroid(BlockState prior_state, Furnace FurnaceState, KodeEnvironment Env){
+		env=Env;furnaceState=FurnaceState;blockState=prior_state;
+		/*furnaceState.update(true);*/}
 	
 	public Furnace getFurnace() throws InvalidDroidException{
 		//env.lock.lock();try{
@@ -74,8 +74,8 @@ public class KodeDroid implements Listener{
 	public BlockFace checkFace(long side, BlockFace face){
 		if (side>=0) return face;
 		else return face.getOppositeFace();}
-	
-	public void move(Location loc){
+
+	public void move(Location loc, BlockState state){
 		//env.lock.lock();try{
 			boolean move = KodeBuilder.getCoordinator().checkPlayerLimit(env.getOwnerId());
 			if (!move)for (CrafterRegion region : KodeBuilder.getCoordinator().getPlayerRegion(env.getOwner().getUniqueId()).values()){
@@ -86,13 +86,15 @@ public class KodeDroid implements Listener{
 						if (region.isIn(loc)){move=true;break;}}}
 			if (move) {				
 				BlockState fromblock = furnaceState;
-				BlockState toblock = loc.getBlock().getState();
+				BlockState toblock = state;
 				blockState.update(true, false);
-				blockState=loc.getBlock().getState();
+				blockState=state;
 				toblock.setType(fromblock.getType());
 				toblock.setData(fromblock.getData());
 				toblock.update(true, false);
-				furnaceState=(Furnace)(toblock.getBlock().getState());}}//finally{env.lock.unlock();}}
+				furnaceState=(Furnace)(toblock.getBlock().getState());}}
+	public void move(Location loc){
+		this .move(loc, loc .getBlock() .getState());}//finally{env.lock.unlock();}}
 	
 	
 	
