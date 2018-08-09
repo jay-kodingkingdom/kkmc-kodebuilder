@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import com.kodingkingdom.craftercoordinator.CrafterRegion;
-import com.kodingkingdom.craftercoordinator.CrafterSchool;
 import com.kodingkingdom.kodebuilder.var.MatVar;
 import com.kodingkingdom.kodebuilder.schedule.KodeSchedule;
 
@@ -55,7 +54,9 @@ public class KodeDroid implements Listener{
 		KodeSchedule schNow=(env.regentNow instanceof KodeSchedule?(KodeSchedule)env.regentNow:null);
 			
 			ItemStack item = env.getOwner().getInventory().getItem((int)slotNum-1);
-			if (item==null)item=new ItemStack(Material.AIR);
+			if (item==null) item=new ItemStack(Material.AIR);
+			else if (item .getType () .equals (Material.WATER_BUCKET)) item = new ItemStack (Material.WATER);
+			else if (item .getType () .equals (Material.LAVA_BUCKET)) item = new ItemStack (Material.LAVA);
 			
 			if (schNow!=null && schNow.getMatVar(slotNum)!=null)
 				put(loc,schNow.getMatVar(slotNum).getdata().getType(),schNow.getMatVar(slotNum).getdata().getData(),true);
@@ -80,10 +81,6 @@ public class KodeDroid implements Listener{
 			boolean move = KodeBuilder.getCoordinator().checkPlayerLimit(env.getOwnerId());
 			if (!move)for (CrafterRegion region : KodeBuilder.getCoordinator().getPlayerRegion(env.getOwner().getUniqueId()).values()){
 				if (region.isIn(loc)) {move=true;break;}}
-			if (!move) for (CrafterSchool school : KodeBuilder.getCoordinator().getSchools().values()){
-				if (school.getPlayers().contains(env.getOwnerId()))
-					for (CrafterRegion region : KodeBuilder.getCoordinator().getSchoolRegion(school.getName()).values()){
-						if (region.isIn(loc)){move=true;break;}}}
 			if (move) {				
 				BlockState fromblock = furnaceState;
 				BlockState toblock = loc.getBlock().getState();
@@ -107,10 +104,6 @@ public class KodeDroid implements Listener{
 		boolean put = KodeBuilder.getCoordinator().checkPlayerLimit(env.getOwnerId());
 		if (!put)for (CrafterRegion region : KodeBuilder.getCoordinator().getPlayerRegion(env.getOwnerId()).values()){
 			if (region.isIn(loc)) {put=true;break;}}
-		if (!put) for (CrafterSchool school : KodeBuilder.getCoordinator().getSchools().values()){
-			if (school.getPlayers().contains(env.getOwnerId()))
-				for (CrafterRegion region : KodeBuilder.getCoordinator().getSchoolRegion(school.getName()).values()){
-					if (region.isIn(loc)){put=true;break;}}}
 		if (put==false)return;
 		
 		if (loc.equals(blockState.getLocation())){

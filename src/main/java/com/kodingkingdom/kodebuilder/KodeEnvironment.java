@@ -60,22 +60,13 @@ public class KodeEnvironment implements Listener {
 	HashMap<Location,BlockState> droidHistory;
 	ItemStack undoStack;
 	
-	float offset=0.35F;
-	float speed=0;
-	int amount=200;
 	long particleInterval=5L;
 		
 	//Queue<Map.Entry<BukkitRunnable,Map.Entry<Integer,Boolean>>> taskQueue;
 	Queue<Map.Entry<BukkitRunnable,Integer>> taskQueue;
 	//static ReentrantLock simplelock = new ReentrantLock();
 
-	public float getParticleOffset(){return offset;}
-	public float getParticleSpeed(){return speed;}
-	public int getParticleAmount(){return amount;}
 	public long getParticleInterval(){return particleInterval;}
-	public void setParticleOffset(float Offset){offset=Offset;}
-	public void setParticleSpeed(float Speed){speed=Speed;}
-	public void setParticleAmount(int Amount){amount=Amount;}
 	public void setParticleInterval(long Interval){particleInterval=Interval;}
 
 	public UUID getOwnerId(){return ownerId;}
@@ -284,7 +275,7 @@ public class KodeEnvironment implements Listener {
 		//kodeBuilder.lock.lock()
 		;try{
 			KodeDroid droid = kodeBuilder.getDroid(ownerId);
-			if (droid==null) return;
+			if (droid==null) throw new RuntimeException ("");
 			if(!droid.getFurnace().equals(e.getBlock().getState()))return;
 			
 			final Block block = droid.getFurnace().getBlock();
@@ -298,7 +289,9 @@ public class KodeEnvironment implements Listener {
 				e.setCancelled(true);
 				inventory.setSmelting(sourceItem.clone());
 				runKode();}}
-		catch (InvalidDroidException ex) {}
+		catch (InvalidDroidException ex) {
+			e.setCancelled(true);
+		}
 		//finally{kodeBuilder.lock.unlock();}
 		}
 

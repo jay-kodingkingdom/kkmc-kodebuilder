@@ -99,7 +99,9 @@ public class KodeBuilder implements Listener {
 		blktypes.add(new EndScope());}
 
 	public void Live(){
-		KodeConfig.loadConfig();
+		this .loadAmountLimit = KodeBuilder .getCoordinator() .getLoadAmountLimit();
+		this .loadTimeLimit = KodeBuilder .getCoordinator() .getLoadTimeLimit();
+		
 		for (Player player : Bukkit.getOnlinePlayers()){
 			envs.put(player.getUniqueId(), new KodeEnvironment(this, blktypes, player));
 			envs.get(player.getUniqueId()).Live();}
@@ -121,10 +123,9 @@ public class KodeBuilder implements Listener {
     			  break;}}
     	
     	for (KodeDroid droid : droids.values()) {
-        	droid.getBlockState().update(true);}
+        	droid.getBlockState().update(true, false);}
     	for (KodeEnvironment env : envs.values()) {
-        	env.Die();}
-		KodeConfig.saveConfig();}
+        	env.Die();}}
 
 	@EventHandler(priority=EventPriority.MONITOR)
     public void playerjoin(PlayerJoinEvent e){
@@ -140,20 +141,20 @@ public class KodeBuilder implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void placeblock(BlockPlaceEvent e){
-		KodeBuilderPlugin.debug("pla blk contend");
+		//KodeBuilderPlugin.debug("pla blk contend");
 		//lock.lock();//envs.get(e.getPlayer().getUniqueId()).lock.lock();
 //		try{
 			if (Material.FURNACE.equals(e.getBlock().getType())){
 				if (droids.containsKey(e.getPlayer().getUniqueId())){
+					e.getBlockReplacedState().update(true, false);
 					envs.get(e.getPlayer().getUniqueId()).stop();
-					e.getBlockPlaced().setType(Material.AIR);
 					droids.get(e.getPlayer().getUniqueId()).move(e.getBlockPlaced().getLocation());}
 				else droids.put(e.getPlayer().getUniqueId(), new KodeDroid((Furnace)e.getBlock().getState(),envs.get(e.getPlayer().getUniqueId())));}//}
 		//finally{lock.unlock();//envs.get(e.getPlayer().getUniqueId()).lock.unlock();}
 		}
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void breakblock(BlockBreakEvent e){
-		KodeBuilderPlugin.debug("brk blk contend");
+		//KodeBuilderPlugin.debug("brk blk contend");
 		//lock.lock();
 		try{
 			if (Material.FURNACE.equals(e.getBlock().getType())||
@@ -198,7 +199,7 @@ public class KodeBuilder implements Listener {
 			if (taskQueues.get(currQueueNum).getValue().isEmpty())taskQueues.remove(currQueueNum);}}
 
 	private void runScheduler(){
-		KodeBuilderPlugin.debug("sch contend");
+		//KodeBuilderPlugin.debug("sch contend");
 		long beginTime = System.currentTimeMillis();
 			//lock.lock();
 			try{

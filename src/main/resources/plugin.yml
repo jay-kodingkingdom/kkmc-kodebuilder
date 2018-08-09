@@ -1,4 +1,4 @@
 name: KodeBuilder
 main: com.kodingkingdom.kodebuilder.KodeBuilderPlugin
 version: 0.0.1
-softdepend: [CrafterCoordinator]
+depend: [CrafterCoordinator]

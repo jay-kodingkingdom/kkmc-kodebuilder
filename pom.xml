@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>LetsCode</groupId>
   <artifactId>KodeBuilder</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>2018.5.1-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -36,7 +36,7 @@
     <dependency>
     	<groupId>LetsCode</groupId>
     	<artifactId>CrafterCoordinator</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
+    	<version>2018.5.1-SNAPSHOT</version>
     </dependency>
 </dependencies>
 </project>
